@@ -1,0 +1,23 @@
+-- TRIGGER REALIZADO EN LA BASE DE DATOS 'MyFood'
+
+DELIMITER $$
+
+CREATE TRIGGER Actualizar_Inventario
+AFTER INSERT 
+ON factura 
+FOR EACH ROW
+
+BEGIN
+  -- Este trigger actualizará el inventario restando la cantidad vendida del producto
+  -- cada que se inserten ventas en la tabla factura:
+  UPDATE inventario
+  SET cantidad = cantidad - NEW.cantidad
+  WHERE idProducto = NEW.idProducto;
+END $$
+
+DELIMITER ;
+
+SELECT * FROM Productos;
+SELECT * FROM Inventario;
+SELECT * FROM Factura;
+
