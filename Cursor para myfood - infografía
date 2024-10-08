@@ -1,0 +1,48 @@
+DELIMITER //
+CREATE PROCEDURE MostrarFacturas()
+BEGIN
+	DECLARE fin INT DEFAULT 0; -- Variable de control
+    
+    -- Variables para almacenar los valores que mostrará el cursor:
+    DECLARE numeroFactura1 INT;
+    DECLARE idProducto1 INT;
+    DECLARE idCliente1 INT;
+    DECLARE cantidad1 INT;
+    DECLARE fechaVenta1 INT;
+	
+    -- Declaramos el cursor y específicamos donde se fijará:
+    DECLARE factura_cursor CURSOR FOR
+		SELECT numeroFactura, idProducto, idCliente, cantidad, fechaVenta
+        FROM factura;
+        
+	-- Utilizamos la variable de control para indicar el fin de ejecución
+    -- del cursor, una vez que no hayan más filas en la tabla factura:
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin = 1;
+    
+    -- Abrimos/Activamos el cursor:
+    OPEN factura_cursor;
+    
+    -- Bucle para que el cursor recorra cada fila de la tabla factura:
+    primer_loop: LOOP
+    
+		-- Extraemos la fila actual del cursor:
+        FETCH factura_cursor INTO numeroFactura1, idProducto1, idCliente1, cantidad1, fechaVenta1;
+        
+        IF fin = 1 THEN
+			LEAVE read_loop;
+		END IF;
+        
+        -- Mostramos la información extraída de la tabla factura, por cada fila dará un
+        -- resultado diferente:
+        
+        SELECT CONCAT('Factura N°:', numeroFactura1, ', Producto ID:', idProducto1, ', Cliente ID: ', idCliente1,
+					  ', Cantidad: ', cantidad1, ', Fecha de Venta: ', fechaVenta1) AS 'Detalles Factura';
+	END LOOP primer_loop;
+    
+    -- Cerramos el cursor:
+    CLOSE factura_cursor;
+
+END //
+DELIMITER ;
+
+-- Hecho por Jorge Andrés Ballen Ramírez
