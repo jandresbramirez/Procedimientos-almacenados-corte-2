@@ -1,0 +1,26 @@
+Hecho por: Jorge Andrés Ballen Ramírez
+DELIMITER !!
+CREATE FUNCTION Detalles_Financieros (cedula_usuario INT) 
+RETURNS VARCHAR(120) DETERMINISTIC
+BEGIN
+	
+    DECLARE Ingresos_Totales DECIMAL(10, 2) DEFAULT 0; -- TIPO DECIMAL Y MOSTRARÁ HASTA 2 DECIMALES.
+    DECLARE Resultado VARCHAR(120);
+	
+    
+    -- Calcular ingresos totales del usuario ingresado:
+    SELECT SUM(I.Monto) INTO Ingresos_Totales
+    FROM Usuario U
+    JOIN Presupuesto P ON U.Cedula = P.Cedula
+    JOIN Ingresos I ON P.idPresupuesto = I.idPresupuesto
+    WHERE U.Cedula = cedula_usuario;
+    -- Realizar la consulta que mostrará los valores en el resultado:
+    SELECT CONCAT('Nombres: ', U.Nombres, '| Apellidos: ', U.Apellidos, '| Ingresos Totales: ', Ingresos_Totales, ' |') INTO Resultado
+    FROM Usuario U
+    WHERE U.Cedula = cedula_usuario;
+    -- Devolver lo almacenado en la variable resultado:
+    RETURN Resultado;
+END !!
+DELIMITER ;
+-- Llamar a la función
+SELECT Detalles_Financieros(2020202);
